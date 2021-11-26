@@ -24,6 +24,9 @@ ball_radius = 20
 
 ball_color = (50,135, 255)
 
+def ball_move():
+    if 
+
 running = True
 while running:
     screen.fill((0,0,0))
@@ -35,7 +38,7 @@ while running:
             if event.key == pygame.K_q:
                 running = False
 
-
+    
     screen.blit(text,textRect)
     pygame.draw.circle(screen, ball_color, (ballX,ballY), ball_radius,0)
     pygame.display.update()
