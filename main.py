@@ -1,46 +1,78 @@
-import math
-import random
-
 import pygame
-from pygame import mixer
+from logic import logic
+from draw import draw
+from game import game
 
-pygame.init()
+pygame.font.init()
+pygame.display.set_caption("Pong")
 
-screen = pygame.display.set_mode((800,600))
+def main():
+    screen = pygame.display.set_mode((game.WIDTH, game.HEIGHT))
+    clock = pygame.time.Clock()
+    run = True
 
-font = pygame.font.Font('Nexa Light.otf', 50)
+    show_welcome_screen = True
+    show_game_screen = False
+    show_end_screen = False
 
-text = font.render('Welcome to Pong', True, (255,255,255))
+    while run:
+        keys = pygame.key.get_pressed()
+        for event in pygame.event.get():
+            # print(event)
 
-textRect = text.get_rect()
+            if event.type == pygame.QUIT:
+                run = False
+                break
 
-ballX = 400
-ballY = 300
+            if keys[pygame.K_q]:
+                print("QUITTING")
+                run = False
+                break
 
-ballX_change = 1
-ballY_change = 1
+            if keys[pygame.K_r]:
+                print("Restarting game [r]")
+                show_welcome_screen = True
+                show_game_screen = False
+                show_end_screen = False
 
-ball_radius = 20
+            if keys[pygame.K_e]:
+                print("Ending game [e]")
+                show_end_screen = True
+                show_welcome_screen = False
+                show_game_screen = False
 
-ball_color = (50,135, 255)
+            if event.type == pygame.KEYDOWN and show_welcome_screen:
+                game.restart_game()
+                show_game_screen = True
+                show_welcome_screen = False
 
-def ball_move():
-    global ballX, ballY, ballX_change, ballY_change
-    ballX = ballX + ballX_change
-    ballY = ballY + ballY_change
+            if event.type == pygame.KEYDOWN and show_end_screen:
+                # restart the game
+                game.restart_game()
+                show_game_screen = True
+                show_end_screen = False
+
+        logic.handle_movement()
+
+        logic.handle_collisions()
+
+        screen.fill("black")
+
+        if show_welcome_screen:
+            draw.draw_welcome_message()
+
+        if show_game_screen:
+            draw.draw_game_screen()
+
+        if show_end_screen:
+
+            draw.draw_end_screen()
+
+        pygame.display.update()
+        clock.tick(60)
+
+    pygame.quit()
 
 
-running = True
-while running:
-    screen.fill((0,0,0))
-    for event in pygame.event.get():
-        if event.type == pygame.QUIT:
-            running = False
-        
-        if event.type == pygame.KEYDOWN:
-            if event.key == pygame.K_q:
-                running = False
-    screen.blit(text,textRect)
-    ball_move()
-    pygame.draw.circle(screen, ball_color, (ballX,ballY), ball_radius,0)
-    pygame.display.update()
+if __name__ == "__main__":
+    main()
